@@ -1,41 +1,38 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
-
-	"github.com/go-chi/chi"
 )
 
-func NewUsersRouter() *chi.Mux {
-	userRouter := chi.NewRouter()
+func GetAllUsers(res http.ResponseWriter, req *http.Request) {
+	rows, err := DB.Query("select name, age, gender, country from customers")
+	if err != nil {
+		log.Printf("There was an error!, \n%v\n", err)
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&name, &age, &gender)
+		if err != nil {
 
-	userRouter.Get("/", getAllUsers)
-	userRouter.Post("/", addUser)
-	userRouter.Get("/{id}", getUserById)
-	userRouter.Put("/{id}", updateUserById)
-	userRouter.Delete("/{id}", deleteUserById)
-
-	return userRouter
+		}
+	}
 }
 
-func getAllUsers(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("This is get all users route!")
-}
-
-func addUser(res http.ResponseWriter, req *http.Request) {
-
-}
-
-func getUserById(res http.ResponseWriter, req *http.Request) {
+func AddUser(res http.ResponseWriter, req *http.Request) {
 
 }
 
-func updateUserById(res http.ResponseWriter, req *http.Request) {
+func GetUserById(res http.ResponseWriter, req *http.Request) {
 
 }
 
-func deleteUserById(res http.ResponseWriter, req *http.Request) {
+func UpdateUserById(res http.ResponseWriter, req *http.Request) {
+
+}
+
+func DeleteUserById(res http.ResponseWriter, req *http.Request) {
 
 }
 

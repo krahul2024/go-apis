@@ -24,9 +24,14 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	usersRouter := NewUsersRouter()
-	router.Get("/", IndexHandler)
-	router.Mount("/users", usersRouter)
+	// user routes
+	router.Route("/users", func(r chi.Router) {
+		r.Get("/", GetAllUsers)
+		r.Post("/", AddUser)
+		r.Get("/{id}", GetUserById)
+		r.Put("/{id}", UpdateUserById)
+		r.Delete("/{id}", DeleteUserById)
+	})
 
 	server := &http.Server{
 		Handler: router,
