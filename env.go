@@ -1,18 +1,15 @@
 package main
 
 import (
+	"api/utils"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
 
 func SetEnvs() {
 	data, err := os.ReadFile(".env")
-	if err != nil {
-		log.Println("There was an error reading the file!\n", err)
-		return
-	}
+	utils.PrintError(err)
 
 	line := ""
 

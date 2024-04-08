@@ -1,9 +1,9 @@
 package main
 
 import (
+	"api/utils"
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -24,13 +24,20 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	// user routes
+	// User routes
 	router.Route("/users", func(r chi.Router) {
 		r.Get("/", GetAllUsers)
 		r.Post("/", AddUser)
 		r.Get("/{id}", GetUserById)
 		r.Put("/{id}", UpdateUserById)
 		r.Delete("/{id}", DeleteUserById)
+	})
+
+	// Auth routes
+	router.Route("/auth", func(r chi.Router) {
+		r.Post("/login", LoginHandler)
+		r.Post("/register", RegistrationHandler)
+		r.Get("/logout", LogoutHandler)
 	})
 
 	server := &http.Server{
@@ -40,9 +47,7 @@ func main() {
 
 	fmt.Println("Starting the server at port : ", PORT)
 	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.FatalError(err, "There was an error starting the server!")
 
 }
 

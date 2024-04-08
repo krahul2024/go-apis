@@ -1,21 +1,17 @@
 package main
 
 import (
+	"api/utils"
 	"fmt"
-	"log"
 )
 
 func DisplayQueryResults(query string) {
 	rows, err := DB.Query(query)
-	if err != nil {
-		log.Fatal("Error executing query:", err)
-	}
+	utils.FatalError(err)
 	defer rows.Close()
 
 	columns, err := rows.Columns()
-	if err != nil {
-		log.Fatal("Error getting column names:", err)
-	}
+	utils.FatalError(err)
 
 	values := make([]interface{}, len(columns))
 	valuePtrs := make([]interface{}, len(columns))
@@ -26,9 +22,7 @@ func DisplayQueryResults(query string) {
 	fmt.Println("Query Results:")
 	for rows.Next() {
 		err := rows.Scan(valuePtrs...)
-		if err != nil {
-			log.Fatal("Error scanning row values:", err)
-		}
+		utils.FatalError(err)
 
 		for i, column := range columns {
 			fmt.Printf("%s: %v\t", column, values[i])
@@ -36,7 +30,5 @@ func DisplayQueryResults(query string) {
 		fmt.Println()
 	}
 
-	if err := rows.Err(); err != nil {
-		log.Fatal("Error iterating over rows:", err)
-	}
+	utils.FatalError(err)
 }
