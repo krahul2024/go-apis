@@ -24,10 +24,21 @@ type User struct {
 func DeleteUserById(res http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
 
-	statement := "delete from users where id=?"
-	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, nil, statement, id)
+	txn, err := DB.Begin()
 	if err != nil {
 		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
+	statement := "delete from users where id=?"
+	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, txn, statement, id)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 
@@ -54,17 +65,23 @@ func UpdateUserById(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	statement := "update users set name=?, age=?, sex=? where id=?"
-	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, nil, statement, id)
+	txn, err := DB.Begin()
 	if err != nil {
-		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		return
+	}
+
+	statement := "update users set name=?, age=?, sex=? where id=?"
+	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, txn, statement, id)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 
 	// since the user details are updated , we have to return the updated user information
-	rows, err := DB.Query("select id, name, age, sex from users where id = ?", id)
+	rows, err := txn.Query("select id, name, age, sex from users where id = ?", id)
 	if err != nil {
-		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 	defer rows.Close()
@@ -72,13 +89,19 @@ func UpdateUserById(res http.ResponseWriter, req *http.Request) {
 	for rows.Next() {
 		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
 		if err != nil {
-			utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+			utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 			return
 		}
 	}
 	err = rows.Err()
 	if err != nil {
-		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 
@@ -101,25 +124,37 @@ func UpdateUserById(res http.ResponseWriter, req *http.Request) {
 
 func GetUserById(res http.ResponseWriter, req *http.Request) {
 	url := chi.URLParam(req, "id")
-	query := "select id, name, age, sex from users where id = ?"
-	rows, err := DB.Query(query, url)
+
+	txn, err := DB.Begin()
 	if err != nil {
-		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		return
+	}
+	query := "select id, name, age, sex, username, email, phone, password, city, country from users where id = ?"
+	rows, err := txn.Query(query, url)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 	defer rows.Close()
 
 	var user User
 	for rows.Next() {
-		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
+		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex, &user.Username, &user.Email, &user.Phone, &user.Password, &user.City, &user.Country)
 		if err != nil {
-			utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+			utils.HttpResponseError(res, err, http.StatusBadRequest, txn)
 			return
 		}
 	}
 	err = rows.Err()
 	if err != nil {
-		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 
@@ -140,9 +175,14 @@ func GetUserById(res http.ResponseWriter, req *http.Request) {
 }
 
 func GetAllUsers(res http.ResponseWriter, req *http.Request) {
-	rows, err := DB.Query("select id, name, age, sex from users")
+	txn, err := DB.Begin()
 	if err != nil {
 		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		return
+	}
+	rows, err := txn.Query("SELECT id, name, age, sex, username, email, phone, password, city, country FROM users")
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusBadRequest, txn)
 		return
 	}
 	defer rows.Close()
@@ -150,9 +190,9 @@ func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 	var users []User
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
+		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex, &user.Username, &user.Email, &user.Phone, &user.Password, &user.City, &user.Country)
 		if err != nil {
-			utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+			utils.HttpResponseError(res, err, http.StatusBadRequest, txn)
 			return
 		}
 		users = append(users, user)
@@ -160,7 +200,13 @@ func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 
 	err = rows.Err()
 	if err != nil {
-		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		utils.HttpResponseError(res, err, http.StatusBadRequest, txn)
+		return
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
 	}
 
