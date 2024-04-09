@@ -1,0 +1,42 @@
+*************************** 1. row ***************************
+  Field: id
+   Type: int
+   Null: NO
+    Key: PRI
+Default: NULL
+  Extra: auto_increment
+*************************** 2. row ***************************
+  Field: name
+   Type: varchar(200)
+   Null: YES
+    Key: UNI
+Default: NULL
+  Extra: 
+*************************** 3. row ***************************
+  Field: description
+   Type: varchar(1000)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 4. row ***************************
+  Field: image_url
+   Type: varchar(1000)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 5. row ***************************
+  Field: createdAt
+   Type: datetime
+   Null: YES
+    Key: 
+Default: CURRENT_TIMESTAMP
+  Extra: DEFAULT_GENERATED
+*************************** 6. row ***************************
+  Field: updatedAt
+   Type: datetime
+   Null: YES
+    Key: 
+Default: CURRENT_TIMESTAMP
+  Extra: DEFAULT_GENERATED on update CURRENT_TIMESTAMP

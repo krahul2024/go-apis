@@ -9,24 +9,27 @@ import (
 )
 
 type User struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-	Sex  string `json:"sex"`
-	Id   int    `json:"id"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Age      int    `json:"age"`
+	Sex      string `json:"sex"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+	City     string `json:"city"`
+	Country  string `json:"country"`
 }
 
 func DeleteUserById(res http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
 
-	query, err := DB.Prepare("delete from users where id=?")
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-	defer query.Close()
-
-	result, err := query.Exec(id)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-
-	numRows, err := result.RowsAffected()
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
+	statement := "delete from users where id=?"
+	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, nil, statement, id)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
 	response := struct {
 		Message string `json:"message"`
@@ -38,40 +41,46 @@ func DeleteUserById(res http.ResponseWriter, req *http.Request) {
 		response.Status = false
 	}
 
-	err = json.NewEncoder(res).Encode(response)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
+	utils.HttpResponseJson(res, response, http.StatusOK)
 }
 
 func UpdateUserById(res http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
+
 	var user User
 	err := json.NewDecoder(req.Body).Decode(&user)
-	utils.HttpResponseError(res, err, http.StatusBadRequest)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		return
+	}
 
-	query, err := DB.Prepare("update users set name=?, age=?, sex=? where id=?")
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-	defer query.Close()
-
-	result, err := query.Exec(user.Name, user.Age, user.Sex, id)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-
-	numRows, err := result.RowsAffected()
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
+	statement := "update users set name=?, age=?, sex=? where id=?"
+	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, nil, statement, id)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
 	// since the user details are updated , we have to return the updated user information
 	rows, err := DB.Query("select id, name, age, sex from users where id = ?", id)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 	defer rows.Close()
 
 	for rows.Next() {
 		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
-		utils.HttpResponseError(res, err, http.StatusInternalServerError)
+		if err != nil {
+			utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+			return
+		}
 	}
-	rows.Err()
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
+	err = rows.Err()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
 	response := struct {
 		User    User   `json:"user"`
@@ -87,27 +96,32 @@ func UpdateUserById(res http.ResponseWriter, req *http.Request) {
 		response.User = User{}
 	}
 
-	err = json.NewEncoder(res).Encode(response)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
+	utils.HttpResponseJson(res, response, 200)
 }
 
 func GetUserById(res http.ResponseWriter, req *http.Request) {
 	url := chi.URLParam(req, "id")
 	query := "select id, name, age, sex from users where id = ?"
 	rows, err := DB.Query(query, url)
-	utils.HttpResponseError(res, err, http.StatusBadRequest)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 	defer rows.Close()
 
 	var user User
 	for rows.Next() {
 		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
-		utils.HttpResponseError(res, err, http.StatusInternalServerError)
+		if err != nil {
+			utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+			return
+		}
 	}
 	err = rows.Err()
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
 	response := struct {
 		User    User   `json:"user"`
@@ -122,28 +136,33 @@ func GetUserById(res http.ResponseWriter, req *http.Request) {
 		response.Status = true
 		response.User = User{}
 	}
-
-	err = json.NewEncoder(res).Encode(response)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError)
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
+	utils.HttpResponseJson(res, response, 200)
 }
 
 func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 	rows, err := DB.Query("select id, name, age, sex from users")
-	utils.PanicOnError(err)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		return
+	}
 	defer rows.Close()
 
 	var users []User
 	for rows.Next() {
 		var user User
 		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
-		utils.PanicOnError(err)
+		if err != nil {
+			utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+			return
+		}
 		users = append(users, user)
 	}
 
 	err = rows.Err()
-	utils.PanicOnError(err)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusBadRequest, nil)
+		return
+	}
 
 	// encode the data as json using encoder since using marshal we send the data in form of []bytes and can't be parsed using JSON.parse() on frontend, rather we need to parse it using TextDecoder()
 	response := struct {
@@ -153,37 +172,46 @@ func GetAllUsers(res http.ResponseWriter, req *http.Request) {
 	}{
 		users, "Successful", true,
 	}
-	err = json.NewEncoder(res).Encode(response)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError, "JSON encoding error!")
-
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
+	utils.HttpResponseJson(res, response, 200)
 }
 
 func AddUser(res http.ResponseWriter, req *http.Request) {
-	var user User
-	err := json.NewDecoder(req.Body).Decode(&user)
-	utils.HttpResponseError(res, err, http.StatusBadRequest, "Invalid body params/ JSON parsing error!")
+	var newUser User
+	err := json.NewDecoder(req.Body).Decode(&newUser)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
-	query, err := DB.Prepare("INSERT INTO users(name, age, sex) VALUES(?, ?, ?)")
-	utils.HttpResponseError(res, err, http.StatusInternalServerError, "Error occurred preparing the query!")
-	defer query.Close()
+	// Transaction starts from here
+	txn, err := DB.Begin()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
-	_, err = query.Exec(user.Name, user.Age, user.Sex)
-	utils.HttpResponseError(res, err, http.StatusInternalServerError, "Error occurred adding the user to database!")
+	statement := "INSERT INTO users(name, age, sex, username, email, phone, password, city, country) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	lastRow, numRows, err := utils.DBInsertUpdateDeleteHelper(res, txn, statement, newUser.Name, newUser.Age, newUser.Sex, newUser.Username, newUser.Email, newUser.Phone, newUser.Password, newUser.City, newUser.Country)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
 
-	rows, err := DB.Query("SELECT id, name, age, sex FROM users")
-	utils.HttpResponseError(res, err, http.StatusInternalServerError, "Error occurred fetching users from database!")
-
+	rows, err := txn.Query("SELECT id, name, age, sex, username, email, phone, password, city, country FROM users")
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
 	defer rows.Close()
 
 	var users []User
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex)
-
-		utils.HttpResponseError(res, err, http.StatusInternalServerError, "Error occurred scanning user row!")
-
+		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Sex, &user.Username, &user.Email, &user.Phone, &user.Password, &user.City, &user.Country)
+		if err != nil {
+			utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+			return
+		}
 		users = append(users, user)
 	}
 
@@ -195,12 +223,17 @@ func AddUser(res http.ResponseWriter, req *http.Request) {
 		users, "Successful", true,
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(res).Encode(response)
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
 
-	utils.HttpResponseError(res, err, http.StatusInternalServerError, "JSON encoding error!")
+	if numRows != 0 || lastRow != 0 {
+		response.Message = "User added successfully!"
+	}
 
+	utils.HttpResponseJson(res, response, 200)
 }
 
 // https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/

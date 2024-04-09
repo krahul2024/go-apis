@@ -40,6 +40,22 @@ func main() {
 		r.Get("/logout", LogoutHandler)
 	})
 
+	// Brands route
+	router.Route("/brands", func(r chi.Router) {
+		r.Get("/", GetAllBrands)
+		r.Post("/", AddBrand)
+		r.Put("/{id}", UpdateBrand)
+		r.Delete("/{id}", DeleteBrand)
+	})
+
+	// Categories route
+	router.Route("/categories", func(r chi.Router) {
+		r.Get("/", GetAllCategories)
+		r.Post("/", AddCategory)
+		r.Put("/{id}", UpdateCategory)
+		r.Delete("/{id}", DeleteCategory)
+	})
+
 	server := &http.Server{
 		Handler: router,
 		Addr:    fmt.Sprintf(":%v", PORT),

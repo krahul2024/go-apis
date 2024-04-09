@@ -1,0 +1,63 @@
+*************************** 1. row ***************************
+  Field: id
+   Type: int
+   Null: NO
+    Key: PRI
+Default: NULL
+  Extra: auto_increment
+*************************** 2. row ***************************
+  Field: order_date
+   Type: datetime
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 3. row ***************************
+  Field: delivery_date
+   Type: datetime
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 4. row ***************************
+  Field: product_id
+   Type: int
+   Null: NO
+    Key: MUL
+Default: NULL
+  Extra: 
+*************************** 5. row ***************************
+  Field: user_id
+   Type: int
+   Null: NO
+    Key: MUL
+Default: NULL
+  Extra: 
+*************************** 6. row ***************************
+  Field: amount
+   Type: int
+   Null: YES
+    Key: 
+Default: 0
+  Extra: 
+*************************** 7. row ***************************
+  Field: shipping_address
+   Type: varchar(1000)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 8. row ***************************
+  Field: createdAt
+   Type: datetime
+   Null: YES
+    Key: 
+Default: CURRENT_TIMESTAMP
+  Extra: DEFAULT_GENERATED
+*************************** 9. row ***************************
+  Field: updatedAt
+   Type: datetime
+   Null: YES
+    Key: 
+Default: CURRENT_TIMESTAMP
+  Extra: DEFAULT_GENERATED on update CURRENT_TIMESTAMP

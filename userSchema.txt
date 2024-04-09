@@ -1,0 +1,91 @@
+*************************** 1. row ***************************
+  Field: id
+   Type: int
+   Null: NO
+    Key: PRI
+Default: NULL
+  Extra: auto_increment
+*************************** 2. row ***************************
+  Field: name
+   Type: varchar(250)
+   Null: NO
+    Key: 
+Default: Unknown
+  Extra: 
+*************************** 3. row ***************************
+  Field: age
+   Type: int
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 4. row ***************************
+  Field: sex
+   Type: varchar(15)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 5. row ***************************
+  Field: username
+   Type: varchar(300)
+   Null: YES
+    Key: UNI
+Default: NULL
+  Extra: 
+*************************** 6. row ***************************
+  Field: email
+   Type: varchar(300)
+   Null: YES
+    Key: UNI
+Default: NULL
+  Extra: 
+*************************** 7. row ***************************
+  Field: phone
+   Type: varchar(10)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 8. row ***************************
+  Field: password
+   Type: varchar(1000)
+   Null: NO
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 9. row ***************************
+  Field: country
+   Type: varchar(200)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 10. row ***************************
+  Field: city
+   Type: varchar(200)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 11. row ***************************
+  Field: profileImageUrl
+   Type: varchar(300)
+   Null: YES
+    Key: 
+Default: NULL
+  Extra: 
+*************************** 12. row ***************************
+  Field: joinedAt
+   Type: datetime
+   Null: YES
+    Key: 
+Default: CURRENT_TIMESTAMP
+  Extra: DEFAULT_GENERATED
+*************************** 13. row ***************************
+  Field: updatedAt
+   Type: timestamp
+   Null: YES
+    Key: 
+Default: CURRENT_TIMESTAMP
+  Extra: DEFAULT_GENERATED on update CURRENT_TIMESTAMP
