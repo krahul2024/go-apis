@@ -1,14 +1,11 @@
 system clear; 
 use first; 
 
-
-insert into categories
-(name, description)
-values 
-(
-    "Smartphones",
-    "Mobile communication devices with advanced computing capabilities."
-); 
+describe users; 
+describe orders ; 
+describe brands ; 
+describe categories; 
+describe products; 
 
 
 

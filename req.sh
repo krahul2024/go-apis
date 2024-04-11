@@ -2,13 +2,13 @@
 
 # curl localhost:3300/users | jq 
 
-curl -v -X PUT \
+curl -v -X POST \
     -H "Content-Type: application/json" \
     -d '{
-        "name": "Apple",
-        "description": "Renowned for its sophisticated technology products, including iPhones, MacBooks, and iPads."
+      "name": "Womens Clothing",
+      "description": "Apparel designed for female individuals, including dresses, skirts, blouses, and tops."
     }' \
-    localhost:3300/brands/4 | jq 
+    localhost:3300/categories | jq 
 
 
 # curl -v -X DELETE localhost:3300/users/5 | jq 

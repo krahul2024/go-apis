@@ -1,0 +1,75 @@
++-----------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| Field           | Type          | Null | Key | Default           | Extra                                         |
++-----------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| id              | int           | NO   | PRI | NULL              | auto_increment                                |
+| name            | varchar(250)  | NO   |     | Unknown           |                                               |
+| age             | int           | YES  |     | -1                |                                               |
+| sex             | varchar(15)   | YES  |     | NA                |                                               |
+| username        | varchar(300)  | YES  | UNI | NULL              |                                               |
+| email           | varchar(300)  | YES  | UNI | NULL              |                                               |
+| phone           | varchar(10)   | YES  |     | NA                |                                               |
+| password        | varchar(1000) | NO   |     | NULL              |                                               |
+| country         | varchar(200)  | YES  |     | NA                |                                               |
+| city            | varchar(200)  | YES  |     | NA                |                                               |
+| profileImageUrl | varchar(300)  | YES  |     |                   |                                               |
+| joinedAt        | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updatedAt       | timestamp     | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++-----------------+---------------+------+-----+-------------------+-----------------------------------------------+
+
+
++-----------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| Field           | Type          | Null | Key | Default           | Extra                                         |
++-----------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| id              | int           | NO   | PRI | NULL              | auto_increment                                |
+| orderDate       | datetime      | YES  |     | NULL              |                                               |
+| deliveryDate    | datetime      | YES  |     | NULL              |                                               |
+| productId       | int           | NO   | MUL | -1                |                                               |
+| userId          | int           | NO   | MUL | -1                |                                               |
+| amount          | int           | YES  |     | 0                 |                                               |
+| shippingAddress | varchar(1000) | YES  |     | NA                |                                               |
+| createdAt       | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updatedAt       | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++-----------------+---------------+------+-----+-------------------+-----------------------------------------------+
+
+
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| Field       | Type          | Null | Key | Default           | Extra                                         |
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| id          | int           | NO   | PRI | NULL              | auto_increment                                |
+| name        | varchar(200)  | YES  | UNI |                   |                                               |
+| description | varchar(1000) | YES  |     |                   |                                               |
+| imageUrl    | varchar(1000) | YES  |     |                   |                                               |
+| createdAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updatedAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+
+
+
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| Field       | Type          | Null | Key | Default           | Extra                                         |
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| id          | int           | NO   | PRI | NULL              | auto_increment                                |
+| name        | varchar(200)  | YES  | UNI |                   |                                               |
+| description | varchar(2000) | YES  |     |                   |                                               |
+| createdAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updatedAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| imageUrl    | varchar(1000) | YES  |     |                   |                                               |
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+
+
+
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| Field       | Type          | Null | Key | Default           | Extra                                         |
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+
+| id          | int           | NO   | PRI | NULL              | auto_increment                                |
+| name        | varchar(200)  | YES  |     | NA                |                                               |
+| summary     | varchar(500)  | YES  |     | NA                |                                               |
+| description | varchar(2000) | YES  |     | NA                |                                               |
+| price       | int           | NO   |     | 0                 |                                               |
+| quantity    | int           | YES  |     | 0                 |                                               |
+| brandId     | int           | NO   | MUL | -1                |                                               |
+| categoryId  | int           | NO   | MUL | -1                |                                               |
+| imageUrl    | varchar(1000) | YES  |     |                   |                                               |
+| createdAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updatedAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++-------------+---------------+------+-----+-------------------+-----------------------------------------------+

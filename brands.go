@@ -186,5 +186,34 @@ func UpdateBrand(res http.ResponseWriter, req *http.Request) {
 }
 
 func DeleteBrand(res http.ResponseWriter, req *http.Request) {
+	id := chi.URLParam(req, "id")
+	statement := "delete from brands where id=?"
+	txn, err := DB.Begin()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
 
+	_, numRows, err := utils.DBInsertUpdateDeleteHelper(res, txn, statement, id)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
+		return
+	}
+
+	response := struct {
+		Message string `json:"message"`
+	}{"Brand deleted successfully!"}
+
+	if numRows == 0 {
+		response.Message = "No brand found!"
+		utils.HttpResponseJson(res, response, http.StatusBadRequest)
+		return
+	}
+	utils.HttpResponseJson(res, response, http.StatusOK)
 }
