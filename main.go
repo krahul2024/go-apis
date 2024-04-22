@@ -52,8 +52,17 @@ func main() {
 	router.Route("/categories", func(r chi.Router) {
 		r.Get("/", GetAllCategories)
 		r.Post("/", AddCategory)
-		r.Put("/{id}", UpdateCategory)
-		r.Delete("/{id}", DeleteCategory)
+		r.Put("/{id}", UpdateCategory)    // not implemented
+		r.Delete("/{id}", DeleteCategory) // not implemented
+	})
+
+	// products route
+	router.Route("/products", func(r chi.Router) {
+		r.Get("/", GetAllProducts)       // not implemented
+		r.Post("/", AddProduct)          // not implemented
+		r.Post("/bulk", AddBulkProducts) // not implemented
+		r.Put("/{id}", UpdateProduct)    // not implemented
+		r.Delete("/{id}", DeleteProduct) // not implemented
 	})
 
 	server := &http.Server{

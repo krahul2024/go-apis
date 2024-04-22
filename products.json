@@ -1,0 +1,178 @@
+[
+  {
+    "Name": "Samsung Galaxy S22 Ultra",
+    "Summary": "Flagship smartphone with advanced features.",
+    "Description": "The Samsung Galaxy S22 Ultra is a premium smartphone...",
+    "Price": 1299,
+    "Quantity": 100,
+    "Brand": {
+      "Id": 1
+    },
+    "Category": {
+      "Id": 1
+    },
+    "ImageUrl": "https://example.com/galaxy_s22_ultra.jpg"
+  },
+  {
+    "Id": 2,
+    "Name": "Apple iPhone 14 Pro",
+    "Summary": "Latest iPhone model with cutting-edge technology.",
+    "Description": "The iPhone 14 Pro is Apple's flagship smartphone...",
+    "Price": 1499,
+    "Quantity": 50,
+    "Brand": {
+      "Id": 2,
+      "Name": "Apple"
+    },
+    "Category": {
+      "Id": 1,
+      "Name": "Smartphones",
+      "Description": "Mobile communication devices with advanced computing capabilities."
+    },
+    "ImageUrl": "https://example.com/iphone_14_pro.jpg"
+  },
+  {
+    "Id": 3,
+    "Name": "Dell XPS 15",
+    "Summary": "Powerful laptop for productivity and entertainment.",
+    "Description": "The Dell XPS 15 is a premium laptop designed for...",
+    "Price": 1799,
+    "Quantity": 30,
+    "Brand": {
+      "Id": 3,
+      "Name": "Dell"
+    },
+    "Category": {
+      "Id": 2,
+      "Name": "Laptops & Computers",
+      "Description": "Portable computing devices used for various tasks, including work and entertainment."
+    },
+    "ImageUrl": "https://example.com/dell_xps_15.jpg"
+  },
+  {
+    "Id": 4,
+    "Name": "Sony BRAVIA OLED A90J",
+    "Summary": "High-quality OLED TV with stunning picture quality.",
+    "Description": "The Sony BRAVIA OLED A90J is a top-of-the-line OLED TV...",
+    "Price": 2999,
+    "Quantity": 20,
+    "Brand": {
+      "Id": 4,
+      "Name": "Sony"
+    },
+    "Category": {
+      "Id": 3,
+      "Name": "Televisions & Home Entertainment",
+      "Description": "Devices for home entertainment, including televisions, sound systems, and streaming devices."
+    },
+    "ImageUrl": "https://example.com/sony_bravia_oled_a90j.jpg"
+  },
+  {
+    "Id": 5,
+    "Name": "HP Spectre x360",
+    "Summary": "Convertible laptop with sleek design and powerful performance.",
+    "Description": "The HP Spectre x360 is a versatile convertible laptop...",
+    "Price": 1299,
+    "Quantity": 25,
+    "Brand": {
+      "Id": 5,
+      "Name": "HP"
+    },
+    "Category": {
+      "Id": 2,
+      "Name": "Laptops & Computers",
+      "Description": "Portable computing devices used for various tasks, including work and entertainment."
+    },
+    "ImageUrl": "https://example.com/hp_spectre_x360.jpg"
+  },
+  {
+    "Id": 6,
+    "Name": "LG OLED C1",
+    "Summary": "Premium OLED TV with exceptional color accuracy.",
+    "Description": "The LG OLED C1 is a high-end OLED TV known for its...",
+    "Price": 2499,
+    "Quantity": 15,
+    "Brand": {
+      "Id": 6,
+      "Name": "LG"
+    },
+    "Category": {
+      "Id": 3,
+      "Name": "Televisions & Home Entertainment",
+      "Description": "Devices for home entertainment, including televisions, sound systems, and streaming devices."
+    },
+    "ImageUrl": "https://example.com/lg_oled_c1.jpg"
+  },
+  {
+    "Id": 7,
+    "Name": "Google Pixel 6",
+    "Summary": "Affordable smartphone with great camera capabilities.",
+    "Description": "The Google Pixel 6 is a mid-range smartphone...",
+    "Price": 699,
+    "Quantity": 40,
+    "Brand": {
+      "Id": 7,
+      "Name": "Google"
+    },
+    "Category": {
+      "Id": 1,
+      "Name": "Smartphones",
+      "Description": "Mobile communication devices with advanced computing capabilities."
+    },
+    "ImageUrl": "https://example.com/google_pixel_6.jpg"
+  },
+  {
+    "Id": 8,
+    "Name": "Asus ROG Strix G15",
+    "Summary": "Gaming laptop with high-performance hardware.",
+    "Description": "The Asus ROG Strix G15 is a powerful gaming laptop...",
+    "Price": 1799,
+    "Quantity": 20,
+    "Brand": {
+      "Id": 8,
+      "Name": "Asus"
+    },
+    "Category": {
+      "Id": 2,
+      "Name": "Laptops & Computers",
+      "Description": "Portable computing devices used for various tasks, including work and entertainment."
+    },
+    "ImageUrl": "https://example.com/asus_rog_strix_g15.jpg"
+  },
+  {
+    "Id": 9,
+    "Name": "OnePlus 10 Pro",
+    "Summary": "Flagship smartphone with fast performance and sleek design.",
+    "Description": "The OnePlus 10 Pro is the latest flagship smartphone from OnePlus...",
+    "Price": 899,
+    "Quantity": 35,
+    "Brand": {
+      "Id": 9,
+      "Name": "OnePlus"
+    },
+    "Category": {
+      "Id": 1,
+      "Name": "Smartphones",
+      "Description": "Mobile communication devices with advanced computing capabilities."
+    },
+    "ImageUrl": "https://example.com/oneplus_10_pro.jpg"
+  },
+  {
+    "Id": 10,
+    "Name": "Microsoft Surface Laptop 4",
+    "Summary": "Sleek and lightweight laptop for productivity.",
+    "Description": "The Microsoft Surface Laptop 4 combines performance...",
+    "Price": 1299,
+    "Quantity": 30,
+    "Brand": {
+      "Id": 10,
+      "Name": "Microsoft"
+    },
+    "Category": {
+      "Id": 2,
+      "Name": "Laptops & Computers",
+      "Description": "Portable computing devices used for various tasks, including work and entertainment."
+    },
+    "ImageUrl": "https://example.com/microsoft_surface_laptop_4.jpg"
+  }
+]
