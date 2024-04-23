@@ -8,23 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-/*
------------------------------------------------------------------------------------------------------------------
-| id          | int           | NO   | PRI | NULL              | auto_increment                                |
-| name        | varchar(200)  | YES  |     | NA                |                                               |
-| summary     | varchar(500)  | YES  |     | NA                |                                               |
-| description | varchar(2000) | YES  |     | NA                |                                               |
-| price       | int           | NO   |     | 0                 |                                               |
-| quantity    | int           | YES  |     | 0                 |                                               |
-| brandId     | int           | NO   | MUL | -1                |                                               |
-| categoryId  | int           | NO   | MUL | -1                |                                               |
-| imageUrl    | varchar(1000) | YES  |     |                   |                                               |
-| createdAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
-| updatedAt   | datetime      | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
------------------------------------------------------------------------------------------------------------------
-
-*/
-
 type Product struct {
 	Id          int      `json:"id"`
 	Name        string   `json:"name"`
