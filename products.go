@@ -3,7 +3,9 @@ package main
 import (
 	"api/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -19,6 +21,75 @@ type Product struct {
 	Category    Category `json:"category"`
 	ImageUrl    string   `json:"imageUrl"`
 	ProductCode string   `json:"productCode"`
+}
+
+func AddBulkProducts(res http.ResponseWriter, req *http.Request) {
+
+}
+
+// this handles dynamic field updates
+func UpdateProduct(res http.ResponseWriter, req *http.Request) {
+	id := chi.URLParam(req, "id")
+	var (
+		data   map[string]interface{}
+		keys   []string
+		values []interface{}
+	)
+	err := json.NewDecoder(req.Body).Decode(&data)
+	if err != nil {
+		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
+		return
+	}
+	fmt.Println("Id : ", id)
+	for key, value := range data {
+		keys = append(keys, key)
+		values = append(values, value)
+	}
+	fmt.Println("Keys : ", keys, "\nValues : ", values)
+	statement := "update products set "
+	for key, _ := range data {
+		if key == "id" {
+			continue
+		}
+		statement += key + "=?, "
+	}
+	statement = statement[:len(statement)-2]
+	statement += " where id = ? "
+	values = append(values, id)
+
+	fmt.Println(statement, values)
+
+	txn, err := DB.Begin()
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, nil)
+		return
+	}
+
+	lastRowId, numRows, err := utils.DBInsertUpdateDeleteHelper(res, txn, statement, values...)
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, txn)
+		return
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, txn)
+		return
+	}
+
+	response := struct {
+		Message string `json:"message"`
+		Status  bool   `json:"status"`
+	}{
+		"Product Updated successfully!", true,
+	}
+	fmt.Println(lastRowId, numRows)
+	if numRows == 0 {
+		response.Message = "No product found or no valid changes for update!"
+		response.Status = false
+	}
+	utils.HttpResponseJson(res, response, 200)
+
 }
 
 func GetProductById(res http.ResponseWriter, req *http.Request) {
@@ -164,21 +235,45 @@ func AddProduct(res http.ResponseWriter, req *http.Request) {
 }
 
 func GetAllProducts(res http.ResponseWriter, req *http.Request) {
+	limitParam := req.URL.Query().Get("limit")
+	if limitParam == "" {
+		limitParam = "5"
+	}
+	pageParam := req.URL.Query().Get("page")
+	if pageParam == "" {
+		pageParam = "0"
+	}
+	limit, err := strconv.Atoi(limitParam)
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, nil)
+		return
+	}
+
+	page, err := strconv.Atoi(pageParam)
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, nil)
+		return
+	}
+
+	offset := page * limit
+
+	fmt.Println(limit)
+
 	statement := `
 		select p.id, p.name, p.summary, p.description, p.price, p.quantity, p.productCode,
-		b.id as brand_id, b.name as brand_name, b.description as brand_description, b.imageUrl as brand_imageUrl, 
+		b.id as brand_id, b.name as brand_name, b.description as brand_description, b.imageUrl as brand_imageUrl,
 		c.id as category_id, c.name as category_name, c.description as category_description, c.imageUrl as category_imageUrl
-		from products p 
-		join brands b on p.brandId = b.id 
-		join categories c on p.categoryId = c.id 
-		limit 10 
+		from products p
+		join brands b on p.brandId = b.id
+		join categories c on p.categoryId = c.id
+		limit ? offset ? 
 	`
 	txn, err := DB.Begin()
 	if err != nil {
 		utils.HttpResponseError(res, err, http.StatusInternalServerError, nil)
 		return
 	}
-	rows, err := txn.Query(statement)
+	rows, err := txn.Query(statement, limit, offset)
 	if err != nil {
 		utils.HttpResponseError(res, err, http.StatusInternalServerError, txn)
 		return
@@ -225,21 +320,13 @@ func GetAllProducts(res http.ResponseWriter, req *http.Request) {
 
 	response := struct {
 		Total    int        `json:"total"`
+		NextLink string     `json:"nextLink"`
 		Products []*Product `json:"products"`
-		Message  string     `json:"message"`
 	}{
-		len(products), products, "To get the next batch, use this link!",
+		len(products), fmt.Sprintf("http://localhost:3300/products?limit=%d&page=%d", limit, page+1), products,
 	}
 
 	utils.HttpResponseJson(res, response, http.StatusOK)
-
-}
-
-func AddBulkProducts(res http.ResponseWriter, req *http.Request) {
-
-}
-
-func UpdateProduct(res http.ResponseWriter, req *http.Request) {
 
 }
 
