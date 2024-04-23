@@ -4,6 +4,8 @@ import (
 	"api/utils"
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 /*
@@ -34,6 +36,67 @@ type Product struct {
 	Category    Category `json:"category"`
 	ImageUrl    string   `json:"imageUrl"`
 	ProductCode string   `json:"productCode"`
+}
+
+func GetProductById(res http.ResponseWriter, req *http.Request) {
+	id := chi.URLParam(req, "id")
+	statement := `
+		select p.id, p.name, p.summary, p.description, p.price, p.quantity, p.productCode, 
+		b.id as brand_id, b.name as brand_name, b.description as brand_description, b.imageUrl as brand_imageUrl, 
+		c.id as category_id, c.name as category_name, c.description as category_description, c.imageUrl as category_imageUrl
+		from products p
+		join brands b on p.brandId = b.id 
+		join categories c on p.categoryId = c.id 
+		where p.id = ? 
+	`
+	rows, err := DB.Query(statement, id)
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, nil)
+		return
+	}
+	defer rows.Close()
+
+	var product Product
+	for rows.Next() {
+		err = rows.Scan(
+			&product.Id,
+			&product.Name,
+			&product.Summary,
+			&product.Description,
+			&product.Price,
+			&product.Quantity,
+			&product.ProductCode,
+			&product.Brand.Id,
+			&product.Brand.Name,
+			&product.Brand.Description,
+			&product.Brand.ImageUrl,
+			&product.Category.Id,
+			&product.Category.Name,
+			&product.Category.Description,
+			&product.Category.ImageUrl,
+		)
+		if err != nil {
+			utils.HttpResponseError(res, err, 500, nil)
+			return
+		}
+	}
+	err = rows.Err()
+	if err != nil {
+		utils.HttpResponseError(res, err, 500, nil)
+		return
+	}
+	response := struct {
+		Product *Product `json:"product"`
+		Message string   `json:"message"`
+	}{
+		&product, "Product Details fetched successfully!",
+	}
+	if product.Id == 0 {
+		response.Product = nil
+		response.Message = "No product found!"
+	}
+
+	utils.HttpResponseJson(res, response, 200)
 }
 
 func AddProduct(res http.ResponseWriter, req *http.Request) {

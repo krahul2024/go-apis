@@ -58,8 +58,9 @@ func main() {
 
 	// products route
 	router.Route("/products", func(r chi.Router) {
-		r.Get("/", GetAllProducts)       // not implemented
-		r.Post("/", AddProduct)          // not implemented
+		r.Get("/", GetAllProducts)
+		r.Get("/{id}", GetProductById)
+		r.Post("/", AddProduct)
 		r.Post("/bulk", AddBulkProducts) // not implemented
 		r.Put("/{id}", UpdateProduct)    // not implemented
 		r.Delete("/{id}", DeleteProduct) // not implemented
